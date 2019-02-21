@@ -1,6 +1,13 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const upload = require('./fbpost/post');
+let waitTime = time=>{
+  return new Promise(resolve=>{
+      setTimeout(function(){
+          return resolve(time*60000)
+      },time*60000)
+  })
+};
 let FINDid = (text,startS,lastS)=>{
     let start = text.indexOf(startS) + startS.length;
     let last = text.indexOf(lastS,start);
@@ -150,54 +157,55 @@ let getContentPost = ({id,cookie,agent})=>{
     let oldArr = [];
     let i = 0;
 
-        async function runSearch(){
-            let config = require('./config');
-            let cookie = config.cookie.sample();
+    async function runSearch(){
+        let config = require('./config');
+        let cookie = config.cookie.sample();
 
-            let fb_dtsg = await fb_dtsg_ACTION({url,cookie,agent});
-            if(fb_dtsg === false){
-                config.status = 'Cookie hết hạn';
-                return await runSearch();
+        let fb_dtsg = await fb_dtsg_ACTION({url,cookie,agent});
+        if(fb_dtsg === false){
+            config.status = 'Cookie hết hạn';
+            return await runSearch();
 
-            }
-            if(!config.group_GET){
-                config.status = 'ID của group lấy bài post không hợp lệ !';
-                return await runSearch();
-            }
-            if(!config.group_UPPOST){
-                config.status = 'ID của group dùng để up bài vào không hợp lệ !';
-                return await runSearch();
-            }
-            let newArr = await GetListIdPost({id:config.group_GET,cookie,agent,fb_dtsg});
-
-            let newestArr = newArr.diff(oldArr);
-            if(i>20){
-                if(newestArr.length>0){
-                    let {content,color,ImageArr}  = await getContentPost({id:newestArr[0],cookie,agent})
-                    await upload(
-                        {
-                            cookie,agent,
-                            location:{
-                                timeline:null,
-                                group:{
-                                    id:config.group_UPPOST
-                                },
-                                page:null
-                            },
-                            content,ImageArr,color,
-                            postLink:null,
-                            youtubeLink:null
-                        }
-                    )
-                }
-            }
-            if(i < 30){
-                i++
-            }
-            oldArr = oldArr.concat(newArr);
+        }
+        if(!config.group_GET){
+            config.status = 'ID của group lấy bài post không hợp lệ !';
             return await runSearch();
         }
-        await runSearch();
+        if(!config.group_UPPOST){
+            config.status = 'ID của group dùng để up bài vào không hợp lệ !';
+            return await runSearch();
+        }
+        let newArr = await GetListIdPost({id:config.group_GET,cookie,agent,fb_dtsg});
+
+        let newestArr = newArr.diff(oldArr);
+        if(i>5){
+            if(newestArr.length>0){
+                let {content,color,ImageArr}  = await getContentPost({id:newestArr[0],cookie,agent});
+                await waitTime(config.time); // khoảng thời gian chờ đợi để up post , đơn vị tính bằng "phút"
+                await upload(
+                    {
+                        cookie,agent,
+                        location:{
+                            timeline:null,
+                            group:{
+                                id:config.group_UPPOST
+                            },
+                            page:null
+                        },
+                        content,ImageArr,color,
+                        postLink:null,
+                        youtubeLink:null
+                    }
+                )
+            }
+        }
+        if(i < 6){
+            i++
+        }
+        oldArr = oldArr.concat(newArr);
+        return await runSearch();
+    }
+    await runSearch();
 
 
 
