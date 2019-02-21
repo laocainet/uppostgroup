@@ -141,14 +141,18 @@ let getContentPost = ({id,cookie,agent})=>{
     let agent  = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36';
 
 
-        Array.prototype.diff = function(a) {
-            return this.filter(function(i) {return a.indexOf(i) < 0;});
-        };
-        let oldArr = [];
-        let i = 0;
+    Array.prototype.diff = function(a) {
+        return this.filter(function(i) {return a.indexOf(i) < 0;});
+    };
+    Array.prototype.sample = function(){
+        return this[Math.floor(Math.random()*this.length)];
+    };
+    let oldArr = [];
+    let i = 0;
+
         async function runSearch(){
             let config = require('./config');
-            let cookie = config.cookie;
+            let cookie = config.cookie.sample();
 
             let fb_dtsg = await fb_dtsg_ACTION({url,cookie,agent});
             if(fb_dtsg === false){
@@ -202,4 +206,4 @@ let getContentPost = ({id,cookie,agent})=>{
 
 
 
-})();;
+})();

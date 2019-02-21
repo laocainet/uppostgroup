@@ -1,6 +1,6 @@
 module.exports = {
-    group_GET:'hello',
+    group_GET:'',
     group_UPPOST:null,
-    cookie:null,
+    cookie:[''],
     status:'Đang hoạt động'
 };
