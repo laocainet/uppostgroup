@@ -16,7 +16,8 @@ app.post('/run',async (req,res)=>{
     config.group_GET = req.body.group_GET;
     config.group_UPPOST = req.body.group_UPPOST;
     config.cookie = req.body.cookie;
+    config.time = req.body.time;
     res.send(true);
 });
 
-app.listen(80);
+app.listen(8080);

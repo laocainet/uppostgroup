@@ -121,7 +121,7 @@ let getContentPost = ({id,cookie,agent})=>{
             body = body.replace(/<!--/g,'');
 
             let $ = cheerio.load(body);
-            let content = 'Empty';
+            let content = '';
             let textRaw = $(`div[data-ft*="*s"]`).find('p').text();
             let textBackground = $(`div[data-ft*="*s"]`).find('span').eq(0).text();
             if(textRaw){
@@ -130,6 +130,7 @@ let getContentPost = ({id,cookie,agent})=>{
                 content = textBackground
 
             }
+            content+=' #sapa';
             let color = null;
             let textID = $("div[data-ft*='text_formatting']").attr('data-ft');
             if(textID) {
