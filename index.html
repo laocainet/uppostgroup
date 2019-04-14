@@ -1,0 +1,76 @@
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <style>
+        .cur{}
+        .cur:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<div id="app">
+        <h2><code>Code tự động up bài vào Group A theo Group B</code></h2>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="email">ID nhóm cần lấy post:</label>
+                <input spellcheck="false" v-model="config.group_GET" type="text" class="form-control" placeholder="Nhập ID" >
+            </div>
+            <div class="form-group">
+                <label for="pwd">ID nhóm sẽ UP post vào:</label>
+                <input spellcheck="false" v-model="config.group_UPPOST" type="text" class="form-control"  placeholder="Nhập ID">
+            </div>
+            <div class="form-group">
+                <label for="pwd">Khoảng thời gian up post kể từ khi có bài post mới (Đơn vi: 'phút'):</label>
+                <input spellcheck="false" v-model="config.time" type="text" class="form-control"  placeholder="Số phút">
+            </div>
+            <div class="form-group">
+                <label for="pwd">Cookie của người up:</label>
+                <input spellcheck="false" v-for="(data,index) in config.cookie" :key="index" v-model="config.cookie[index]" type="text" class="form-control"  placeholder="Cookie của nick đăng bài">
+                <br>
+
+                <button class="btn " @click="config.cookie.push('')">+</button>
+
+            </div>
+            <button @click="approveGroup" type="submit" class="btn btn-default">Chạy</button>
+         </div>
+
+
+
+
+    </div>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            host:'http://45.32.107.162:8080',
+            config:{
+                group_GET:null,
+                group_UPPOST:null,
+                time:0,
+                cookie:[''],
+            },
+            list:[]
+        },
+        created:async function(){
+            let response = await axios.post(this.host+'/');
+            console.log(response.data)
+            return this.config = response.data
+        },
+        methods:{
+            approveGroup:async function(){
+               
+                await axios.post(this.host+'/run',this.config)
+                alert('Bạn đợi khoảng 1 phút sẽ có hiệu lực nhé')
+            }
+        }
+    })
+</script>
+</html>
